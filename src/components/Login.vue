@@ -13,52 +13,55 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { socket } from '../utils/socket';
+import { socket } from "../utils/socket";
 
-const REDIRECT_URL = process.env.NODE_ENV === 'production' ? 'https://bot.funo.io/oauth' : 'http://localhost:8080/oauth'
+const REDIRECT_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://bot.funo.io/oauth"
+    : "http://localhost:8080/oauth";
 
-const SCOPE = encodeURIComponent(['email', 'guilds', 'identify'].join(' '))
-const OAUTH_URL =
-  `https://discordapp.com/api/oauth2/authorize?client_id=332971222897786892&redirect_uri=${encodeURI(REDIRECT_URL)}&response_type=code&scope=${SCOPE}`
+const SCOPE = encodeURIComponent(["email", "guilds", "identify"].join(" "));
+const OAUTH_URL = `https://discordapp.com/api/oauth2/authorize?client_id=332971222897786892&redirect_uri=${encodeURI(
+  REDIRECT_URL
+)}&response_type=code&scope=${SCOPE}`;
 
 @Component
 export default class Login extends Vue {
-
-  private accessToken: string | null = null
+  private accessToken: string | null = null;
 
   private openOauth() {
     const popup = open(
       OAUTH_URL,
       "Login with Discord",
       "height=700,width=500,menubar=no,status=no"
-    )
-    if(!popup) return
+    );
+    if (!popup) return;
 
     const interval = setInterval(() => {
       try {
         popup.location.href; // Will continously throw an error until redirected
-        clearInterval(interval)
+        clearInterval(interval);
 
-        this.handleCode(popup.location.search.replace('?code=', ''), popup)
-      } catch(e) {}
-    }, 500)
+        this.handleCode(popup.location.search.replace("?code=", ""), popup);
+      } catch (e) {}
+    }, 1000);
   }
 
   private handleCode(code: string, popup: Window) {
-    socket.emit('oauthCode', code, REDIRECT_URL, SCOPE, async (data: any) => {
-      popup.close()
-      
-      this.accessToken = data.access_token
+    socket.emit("oauthCode", code, REDIRECT_URL, SCOPE, async (data: any) => {
+      popup.close();
 
-      if(!this.accessToken) return
-      const res = await fetch('https://discordapp.com/api/users/@me', {
+      this.accessToken = data.access_token;
+
+      if (!this.accessToken) return;
+      const res = await fetch("https://discordapp.com/api/users/@me", {
         headers: {
-          Authorization: `Bearer ${this.accessToken}`,
+          Authorization: `Bearer ${this.accessToken}`
         }
-      })
-      const body = await res.json()
-      alert(`Welcome back ${body.username}`)
-    })
+      });
+      const body = await res.json();
+      alert(`Welcome back ${body.username}`);
+    });
   }
 }
 </script>
