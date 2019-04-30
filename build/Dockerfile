@@ -1,7 +1,7 @@
 FROM node:10-alpine
 
 RUN mkdir /app
-COPY build /app/
+COPY . /app/
 
 WORKDIR /app
 
