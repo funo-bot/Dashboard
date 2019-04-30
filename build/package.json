@@ -2,6 +2,9 @@
   "name": "funo-dashboard-build",
   "main": "app.js",
   "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
   "dependencies": {
     "express": "^4.16.4"
   },
