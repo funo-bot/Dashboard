@@ -15,10 +15,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import { socket } from "../utils/socket";
 
-const REDIRECT_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://bot.funo.io/oauth"
-    : "http://localhost:8080/oauth";
+const REDIRECT_URL = `${location.origin}/oauth`;
 
 const SCOPE = encodeURIComponent(["email", "guilds", "identify"].join(" "));
 const OAUTH_URL = `https://discordapp.com/api/oauth2/authorize?client_id=332971222897786892&redirect_uri=${encodeURI(
@@ -51,16 +48,16 @@ export default class Login extends Vue {
     socket.emit("oauthCode", code, REDIRECT_URL, SCOPE, async (data: any) => {
       popup.close();
 
+      if (!data.access_token) return;
+
       this.accessToken = data.access_token;
 
-      if (!this.accessToken) return;
-      const res = await fetch("https://discordapp.com/api/users/@me", {
-        headers: {
-          Authorization: `Bearer ${this.accessToken}`
-        }
-      });
-      const body = await res.json();
-      alert(`Welcome back ${body.username}`);
+      data.createdAt = Date.now() - 5000 // 5 second process buffer
+      localStorage.setItem('user', JSON.stringify(data))
+
+      socket.emit('login', this.accessToken)
+
+      this.$router.push({ name: 'dashboard' })
     });
   }
 }
@@ -72,15 +69,19 @@ export default class Login extends Vue {
   display: flex;
   justify-content: center;
 
-  .login {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
+  .card {
+    width: 480px;
 
-    img {
-      height: 30px;
-      width: 100px;
+    .login {
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+
+      img {
+        height: 30px;
+        width: 100px;
+      }
     }
   }
 }

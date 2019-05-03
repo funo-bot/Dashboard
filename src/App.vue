@@ -4,15 +4,7 @@
   </div>
 </template><script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Dashboard from "./components/Dashboard.vue";
-import Login from "./components/Login.vue";
 
-@Component({
-  components: {
-    Dashboard,
-    Login
-  }
-})
 export default class App extends Vue {}
 </script><style lang="less">
 @import (css) url("https://fonts.googleapis.com/css?family=Roboto:300,400");
@@ -33,13 +25,25 @@ section {
   width: 100%;
 }
 
+.grid {
+  display: grid;
+
+  &.three {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  &.four {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 .card {
-  background-color: @dark;
+  background-color: @darker;
   border-radius: 5px;
   box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.2);
   color: @white;
   padding: 40px;
-  width: 480px;
+  // width: 480px;
 
   .title,
   .sub {
