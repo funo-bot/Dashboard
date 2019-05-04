@@ -1,3 +1,4 @@
+rd /s /q build\.git
 rd /s /q build\dist
 CALL vue-cli-service build --production --dest build/dist
 cd build

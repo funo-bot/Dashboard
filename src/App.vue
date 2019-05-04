@@ -83,4 +83,12 @@ section {
     }
   }
 }
+
+.input {
+  background-color: @darkish;
+  border: none;
+  border-radius: 3px;
+  color: @grey;
+  padding: 10px;
+}
 </style>
